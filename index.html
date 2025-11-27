@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Simple Counter App V2 - Module 1</title>
+    <title>Simple Counter App V2 - Develop</title>
     <!-- Sử dụng Tailwind CSS cho styling -->
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
@@ -56,43 +56,54 @@
         // Các biến DOM được khai báo ngoài để scope rộng hơn
         let valueElement;
         let increaseBtn;
-
+        // MODULE 2 V2 CHANGE: Thêm hằng số giới hạn
+        const MAX_COUNT = 50; 
+        
         // State
         let count = 0;
         
         /**
-         * Cập nhật hiển thị giá trị. (V1 logic)
          */
         function updateDisplay() {
             // Đảm bảo phần tử tồn tại trước khi cập nhật
             if (!valueElement || !increaseBtn) return; 
 
             valueElement.textContent = count;
-            
-            // Logic Giới hạn (MODULE 2 V2) KHÔNG CÓ ở nhánh này.
-            increaseBtn.disabled = false;
-            increaseBtn.classList.remove('opacity-50', 'cursor-not-allowed');
-            valueElement.classList.remove('ring-2', 'ring-red-500');
+            // MODULE 2 V2 CHANGE: Thêm logic disable nút khi đạt MAX_COUNT
+            if (count >= MAX_COUNT) {
+                increaseBtn.disabled = true;
+                increaseBtn.classList.add('opacity-50', 'cursor-not-allowed');
+                valueElement.classList.add('ring-2', 'ring-red-500'); // Hiển thị cảnh báo
+            } else {
+                increaseBtn.disabled = false;
+                increaseBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+                valueElement.classList.remove('ring-2', 'ring-red-500');
+            }
         }
 
         /**
-         * Tăng giá trị đếm lên 1. (V1 logic, KHÔNG CÓ kiểm tra giới hạn)
+         * Tăng giá trị đếm lên 1.
          */
         function increaseCounter() {
-            count += 1;
-            updateDisplay();
-            console.log('Tăng V1 (+1): ' + count);
+            // MODULE 2 V2 CHANGE: Kiểm tra giới hạn trước khi tăng
+            if (count < MAX_COUNT) { 
+                count += 1;
+                updateDisplay();
+                console.log('Tăng M2 (+1): ' + count);
+            } else {
+                console.log('KHÔNG THỂ TĂNG: Đã đạt giới hạn tối đa: ' + MAX_COUNT);
+            }
         }
         
         /**
-         * Giảm giá trị đếm xuống 1. (V1 logic)
+         * Giảm giá trị đếm xuống 1.
          */
         function decreaseCounter() {
             count -= 1;
             updateDisplay();
-            console.log('Giảm: ' + count);
-        }
-
+            // LƯU Ý: Dòng console.log này sẽ bị ghi đè bởi Hotfix sau này (Merge Commit 8)
+            console.log('Giảm: ' + count); 
+        
         // MODULE 1 V2 CHANGE: Thêm chức năng Reset
         /**
          * Đặt lại bộ đếm về 0.
