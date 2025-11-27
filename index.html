@@ -3,25 +3,29 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Simple Counter App - V1 Base</title>
+    <title>Simple Counter App V2 - Develop</title>
+    <!-- Sử dụng Tailwind CSS cho styling -->
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
+        /* Thiết lập font Inter */
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap');
         body {
             font-family: 'Inter', sans-serif;
-            background-color: #f0f4f8;
+            background-color: #f3f4f6;
             display: flex;
             justify-content: center;
             align-items: center;
             min-height: 100vh;
+            margin: 0;
         }
-        .text-primary { color: #059669; }
-        .bg-secondary { background-color: #10b981; }
+        .text-primary { color: #059669; } /* Emerald-600 */
+        .bg-secondary { background-color: #10b981; } /* Emerald-500 */
     </style>
 </head>
 <body>
+
     <div id="app-container" class="bg-white p-8 rounded-xl shadow-2xl w-full max-w-sm">
-        <h1 class="text-3xl font-extrabold text-center mb-6 text-gray-800">Ứng dụng Bộ đếm Đơn giản (V1)</h1>
+        <h1 class="text-3xl font-extrabold text-center mb-6 text-gray-800">Simple Counter App</h1>
         
         <!-- Hiển thị Giá trị -->
         <div id="counter-value" class="text-6xl font-black text-center mb-8 p-6 bg-gray-100 rounded-lg text-primary transition duration-300">
@@ -38,46 +42,84 @@
                     class="bg-red-500 hover:bg-red-600 text-white font-semibold py-3 px-6 rounded-lg shadow-md transition duration-300 transform hover:scale-[1.02]">
                 Giảm (-1)
             </button>
-            <!-- CODE V2 MODULES SẼ ĐƯỢC THÊM VÀO SAU -->
+            <!-- MODULE 1 V2: NÚT RESET -->
+            <button onclick="resetCounter()" 
+                    class="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-3 px-6 rounded-lg shadow-md transition duration-300 transform hover:scale-[1.02]">
+                Đặt lại (Reset)
+            </button>
+            <!-- END MODULE 1 V2 -->
         </div>
+        
     </div>
 
-    <!-- SCRIPT BLOCK: Logic V1 cơ bản -->
     <script>
+        // Các biến DOM được khai báo ngoài để scope rộng hơn
+        let valueElement;
+        let increaseBtn;
+        // MODULE 2 V2 CHANGE: Thêm hằng số giới hạn
+        const MAX_COUNT = 50; 
+        
         // State
         let count = 0;
         
-        // Biến DOM
-        let valueElement;
-        let increaseBtn;
-        
+        /**
+         */
         function updateDisplay() {
-            // Logic V1 cơ bản: Chỉ cập nhật giá trị
-            if (valueElement) {
-                valueElement.textContent = count;
+            // Đảm bảo phần tử tồn tại trước khi cập nhật
+            if (!valueElement || !increaseBtn) return; 
+
+            valueElement.textContent = count;
+            // MODULE 2 V2 CHANGE: Thêm logic disable nút khi đạt MAX_COUNT
+            if (count >= MAX_COUNT) {
+                increaseBtn.disabled = true;
+                increaseBtn.classList.add('opacity-50', 'cursor-not-allowed');
+                valueElement.classList.add('ring-2', 'ring-red-500'); // Hiển thị cảnh báo
+            } else {
+                increaseBtn.disabled = false;
+                increaseBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+                valueElement.classList.remove('ring-2', 'ring-red-500');
             }
         }
 
-        // Chức năng V1: Tăng (+1)
+        /**
+         * Tăng giá trị đếm lên 1.
+         */
         function increaseCounter() {
-            count += 1;
-            updateDisplay();
-            console.log('Tăng V1: ' + count);
+            // MODULE 2 V2 CHANGE: Kiểm tra giới hạn trước khi tăng
+            if (count < MAX_COUNT) { 
+                count += 1;
+                updateDisplay();
+                console.log('Tăng M2 (+1): ' + count);
+            } else {
+                console.log('KHÔNG THỂ TĂNG: Đã đạt giới hạn tối đa: ' + MAX_COUNT);
+            }
         }
         
-        // Chức năng V1: Giảm (-1)
+        /**
+         * Giảm giá trị đếm xuống 1.
+         */
         function decreaseCounter() {
             count -= 1;
             updateDisplay();
-            console.log('Giảm: ' + count);
-        }
+            // LƯU Ý: Dòng console.log này sẽ bị ghi đè bởi Hotfix sau này (Merge Commit 8)
+            console.log('Giảm: ' + count); 
         
-        // Khởi tạo: Đảm bảo truy cập DOM sau khi DOM đã được tải
+        // MODULE 1 V2 CHANGE: Thêm chức năng Reset
+        /**
+         * Đặt lại bộ đếm về 0.
+         */
+        function resetCounter() {
+            count = 0;
+            updateDisplay();
+            console.log('Đặt lại về: ' + count);
+        }
+
+        // Khởi tạo: Lấy các phần tử DOM sau khi tài liệu tải xong
         document.addEventListener('DOMContentLoaded', () => {
             valueElement = document.getElementById('counter-value');
             increaseBtn = document.getElementById('increase-btn');
             
-            if (valueElement) {
+            if (valueElement && increaseBtn) {
                 updateDisplay();
             }
         });
