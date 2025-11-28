@@ -1,0 +1,1 @@
+Commit thường bị cấm push trực tiếp
